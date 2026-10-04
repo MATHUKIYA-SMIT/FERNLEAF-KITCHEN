@@ -1,0 +1,59 @@
+.dashboard {
+  min-height: 100vh;
+
+  background-color: #f5f7f4;
+}
+
+.content {
+  min-height: calc(100vh - 72px);
+}
+
+/* Welcome */
+
+.welcome {
+  min-height: calc(100vh - 72px);
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+.welcome h1 {
+  margin: 0 0 10px;
+
+  font-size: 32px;
+  color: #214d2b;
+}
+
+.welcome p {
+  margin: 0;
+
+  color: #6b7280;
+  font-size: 15px;
+}
+
+/* Coming soon */
+
+.comingSoon {
+  min-height: calc(100vh - 72px);
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.comingSoon h2 {
+  margin-bottom: 8px;
+
+  color: #214d2b;
+}
+
+.comingSoon p {
+  color: #6b7280;
+}

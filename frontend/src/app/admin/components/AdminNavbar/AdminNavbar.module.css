@@ -1,0 +1,112 @@
+.navbar {
+  width: 100%;
+  height: 72px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 28px;
+
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+
+  box-sizing: border-box;
+}
+
+/* Logo */
+
+.logoSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 240px;
+}
+
+.logo {
+  object-fit: contain;
+}
+
+.websiteName {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #214d2b;
+}
+
+/* Search */
+
+.searchSection {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+
+  padding: 0 30px;
+}
+
+.searchBar {
+  width: 100%;
+  max-width: 420px;
+
+  padding: 11px 16px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+
+  outline: none;
+
+  font-size: 14px;
+
+  background-color: #f9fafb;
+}
+
+.searchBar:focus {
+  border-color: #4d7c52;
+  background-color: #ffffff;
+}
+
+/* Right buttons */
+
+.actionSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 420px;
+  justify-content: flex-end;
+}
+
+.navButton,
+.logoutButton {
+  border: none;
+  border-radius: 8px;
+
+  padding: 10px 15px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.navButton {
+  background-color: #edf4ed;
+  color: #285a32;
+}
+
+.navButton:hover {
+  background-color: #dcebdc;
+}
+
+.logoutButton {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.logoutButton:hover {
+  background-color: #b91c1c;
+}
