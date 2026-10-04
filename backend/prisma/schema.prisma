@@ -3,11 +3,351 @@
 
   // Get a free hosted Postgres database in seconds: `npx create-db`
 
-  generator client {
-    provider = "prisma-client"
-    output   = "../src/generated/prisma"
-  }
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
 
-  datasource db {
-    provider = "postgresql"
-  }
+datasource db {
+  provider = "postgresql"
+}
+
+
+// ====================
+// ENUMS
+// ====================
+
+enum UserRole {
+  Admin
+  Kitchen
+  Dispatch
+  Driver
+}
+
+enum CompanyType {
+  Partner
+  Enterprise
+  Standard
+}
+
+enum DropStatus {
+  Kitchen_ready
+  Dispatch_ready
+  Out_for_delivery
+  Delivered
+}
+
+enum OrderStatus {
+  Draft
+  Placed
+  Confirmed
+  Cancelled
+  Rejected
+  Delivered
+}
+
+enum InvoiceStatus {
+  Unpaid
+  Paid
+}
+
+enum DishTemperature {
+  Hot
+  Cold
+}
+
+enum DishDietary {
+  Vegan
+  Jain
+  Vegetarian
+  Non_vegetarian
+}
+
+enum CombinationStatus {
+  Pending
+  Started
+  Done
+}
+
+
+// ====================
+// USER
+// ====================
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @db.VarChar
+  email        String   @db.VarChar
+  password     String   @db.VarChar
+  role         UserRole
+  is_available Boolean
+
+  created_orders Order[] @relation("OrderCreatedBy")
+  driver_drops   Drop[]  @relation("DropDriver")
+}
+
+
+// ====================
+// COMPANY
+// ====================
+
+model Company {
+  id            String      @id @default(uuid()) @db.Uuid
+  name          String      @db.VarChar
+  type          CompanyType
+  address       String      @db.VarChar
+  billing_email String      @db.VarChar
+
+  drops              Drop[]
+  orders             Order[]
+  invoices           Invoice[]
+  company_categories CompanyCategory[]
+  company_dishes     CompanyDish[]
+}
+
+
+// ====================
+// CATEGORY
+// ====================
+
+model Category {
+  id         String  @id @default(uuid()) @db.Uuid
+  name       String  @db.VarChar
+  is_active  Boolean
+
+  company_categories CompanyCategory[]
+  dishes             Dish[]
+}
+
+
+// ====================
+// DROP
+// ====================
+
+model Drop {
+  id           String     @id @default(uuid()) @db.Uuid
+  company_id   String     @db.Uuid
+  driver_id    String     @db.Uuid
+  drop_date    DateTime   @db.Date
+  drop_time    DateTime   @db.Time
+  status       DropStatus
+  delivered_at DateTime?
+
+  company Company @relation(fields: [company_id], references: [id])
+  driver  User    @relation("DropDriver", fields: [driver_id], references: [id])
+
+  drop_orders DropOrder[]
+}
+
+
+// ====================
+// ORDER
+// ====================
+
+model Order {
+  id            String      @id @default(uuid()) @db.Uuid
+  company_id    String      @db.Uuid
+  created_by    String      @db.Uuid
+  delivery_date DateTime    @db.Date
+  delivery_time DateTime    @db.Time
+  status        OrderStatus
+  total         Decimal     @db.Decimal(12, 2)
+  created_at    DateTime    @default(now())
+
+  company Company @relation(fields: [company_id], references: [id])
+  creator User    @relation("OrderCreatedBy", fields: [created_by], references: [id])
+
+  drop_orders    DropOrder[]
+  invoice_orders InvoiceOrder[]
+  order_lines    OrderLine[]
+}
+
+
+// ====================
+// INVOICE
+// ====================
+
+model Invoice {
+  id         String        @id @default(uuid()) @db.Uuid
+  company_id String        @db.Uuid
+  total      Decimal       @db.Decimal(12, 2)
+  status     InvoiceStatus
+  created_at DateTime      @default(now())
+  paid_at    DateTime?
+
+  company Company @relation(fields: [company_id], references: [id])
+
+  invoice_orders InvoiceOrder[]
+}
+
+
+// ====================
+// COMPANY CATEGORY
+// ====================
+
+model CompanyCategory {
+  id          String  @id @default(uuid()) @db.Uuid
+  company_id  String  @db.Uuid
+  category_id String  @db.Uuid
+  is_visible  Boolean
+
+  company  Company  @relation(fields: [company_id], references: [id])
+  category Category @relation(fields: [category_id], references: [id])
+
+  @@unique([company_id, category_id])
+}
+
+
+// ====================
+// DISH
+// ====================
+
+model Dish {
+  id            String           @id @default(uuid()) @db.Uuid
+  category_id   String           @db.Uuid
+  name          String           @db.VarChar
+  description   String           @db.VarChar
+  image         String           @db.VarChar
+  temperature   DishTemperature
+  dietary       DishDietary
+  partner_price Decimal          @db.Decimal(12, 2)
+  is_active     Boolean
+
+  category Category @relation(fields: [category_id], references: [id])
+
+  company_dishes CompanyDish[]
+  order_lines    OrderLine[]
+}
+
+
+// ====================
+// COMPANY DISH
+// ====================
+
+model CompanyDish {
+  id         String  @id @default(uuid()) @db.Uuid
+  company_id String  @db.Uuid
+  dish_id    String  @db.Uuid
+  is_visible Boolean
+
+  company Company @relation(fields: [company_id], references: [id])
+  dish    Dish    @relation(fields: [dish_id], references: [id])
+
+  @@unique([company_id, dish_id])
+}
+
+
+// ====================
+// DROP ORDER
+// ====================
+
+model DropOrder {
+  id       String @id @default(uuid()) @db.Uuid
+  drop_id  String @db.Uuid
+  order_id String @db.Uuid
+
+  drop  Drop  @relation(fields: [drop_id], references: [id])
+  order Order @relation(fields: [order_id], references: [id])
+
+  @@unique([drop_id, order_id])
+}
+
+
+// ====================
+// INVOICE ORDER
+// ====================
+
+model InvoiceOrder {
+  id         String @id @default(uuid()) @db.Uuid
+  invoice_id String @db.Uuid
+  order_id   String @db.Uuid
+
+  invoice Invoice @relation(fields: [invoice_id], references: [id])
+  order   Order   @relation(fields: [order_id], references: [id])
+
+  @@unique([invoice_id, order_id])
+}
+
+
+// ====================
+// ORDER LINE
+// ====================
+
+model OrderLine {
+  id          String   @id @default(uuid()) @db.Uuid
+  order_id    String   @db.Uuid
+  dish_id     String   @db.Uuid
+  dish_name   String   @db.VarChar
+  dish_price  Decimal  @db.Decimal(12, 2)
+  quantity    Int
+  line_total  Decimal  @db.Decimal(12, 2)
+
+  order Order @relation(fields: [order_id], references: [id])
+  dish  Dish  @relation(fields: [dish_id], references: [id])
+
+  combinations Combination[]
+}
+
+
+// ====================
+// OPTION GROUP
+// ====================
+
+model OptionGroup {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @db.VarChar
+  is_required Boolean
+
+  options Option[]
+}
+
+
+// ====================
+// OPTION
+// ====================
+
+model Option {
+  id              String  @id @default(uuid()) @db.Uuid
+  option_group_id String  @db.Uuid
+  name            String  @db.VarChar
+  partner_price   Decimal @db.Decimal(12, 2)
+  is_active       Boolean
+
+  option_group OptionGroup @relation(fields: [option_group_id], references: [id])
+
+  combination_options CombinationOption[]
+}
+
+
+// ====================
+// COMBINATION
+// ====================
+
+model Combination {
+  id            String            @id @default(uuid()) @db.Uuid
+  order_line_id String            @db.Uuid
+  quantity      Int
+  status        CombinationStatus
+  started_at    DateTime?
+  completed_at  DateTime?
+
+  order_line OrderLine @relation(fields: [order_line_id], references: [id])
+
+  combination_options CombinationOption[]
+}
+
+
+// ====================
+// COMBINATION OPTION
+// ====================
+
+model CombinationOption {
+  id             String  @id @default(uuid()) @db.Uuid
+  combination_id String  @db.Uuid
+  option_id      String  @db.Uuid
+  option_name    String  @db.VarChar
+  option_price   Decimal @db.Decimal(12, 2)
+
+  combination Combination @relation(fields: [combination_id], references: [id])
+  option      Option      @relation(fields: [option_id], references: [id])
+}
