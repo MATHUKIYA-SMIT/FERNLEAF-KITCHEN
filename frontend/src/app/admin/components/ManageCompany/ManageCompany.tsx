@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import styles from "./ManageCompany.module.css";
+import { apiRequest } from "@/lib/api";
 
 type CompanyType = "Partner" | "Enterprise" | "Standard";
 
@@ -12,19 +13,43 @@ interface CompanyFormData {
   billing_email: string;
 }
 
+interface CompanyResponse {
+  message: string;
+  operation: "create" | "update";
+  company: {
+    id: string;
+    name: string;
+    type: CompanyType;
+    address: string;
+    billing_email: string;
+  };
+}
+
+interface DeleteCompanyResponse {
+  message: string;
+  operation: "delete";
+}
+
 export default function ManageCompany() {
-  const [activeForm, setActiveForm] = useState<"add" | "delete">("add");
+  const [activeForm, setActiveForm] =
+    useState<"add" | "delete">("add");
 
   // Add / Update form
-  const [companyData, setCompanyData] = useState<CompanyFormData>({
-    name: "",
-    type: "Standard",
-    address: "",
-    billing_email: "",
-  });
+  const [companyData, setCompanyData] =
+    useState<CompanyFormData>({
+      name: "",
+      type: "Standard",
+      address: "",
+      billing_email: "",
+    });
 
   // Delete form
   const [deleteName, setDeleteName] = useState("");
+
+  // UI states
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleCompanyChange = (
     field: keyof CompanyFormData,
@@ -36,48 +61,89 @@ export default function ManageCompany() {
     }));
   };
 
-  const handleCompanySubmit = (
+  const handleCompanySubmit = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
 
-    /*
-     * This object is intentionally kept with the exact
-     * backend field names we finalized.
-     */
-    const data: CompanyFormData = {
-      name: companyData.name,
-      type: companyData.type,
-      address: companyData.address,
-      billing_email: companyData.billing_email,
-    };
+    setLoading(true);
+    setMessage("");
+    setError("");
 
-    console.log("Company data:", data);
+    try {
+      const response =
+        await apiRequest<CompanyResponse>(
+          "/companies",
+          {
+            method: "POST",
+            body: JSON.stringify(companyData),
+          }
+        );
 
-    /*
-     * Backend API will be connected here.
-     *
-     * Backend logic:
-     *
-     * Company exists -> UPDATE
-     * Company doesn't exist -> CREATE
-     */
+      setMessage(response.message);
+
+      // Clear form after successful operation
+      setCompanyData({
+        name: "",
+        type: "Standard",
+        address: "",
+        billing_email: "",
+      });
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteSubmit = (
+  const handleDeleteSubmit = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
 
-    const data = {
-      name: deleteName,
-    };
+    setLoading(true);
+    setMessage("");
+    setError("");
 
-    console.log("Delete company:", data);
+    try {
+      const response =
+        await apiRequest<DeleteCompanyResponse>(
+          "/companies",
+          {
+            method: "DELETE",
+            body: JSON.stringify({
+              name: deleteName,
+            }),
+          }
+        );
 
-    /*
-     * Delete API will be connected here.
-     */
+      setMessage(response.message);
+
+      // Clear delete field
+      setDeleteName("");
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFormChange = (
+    form: "add" | "delete"
+  ) => {
+    setActiveForm(form);
+
+    // Clear previous messages
+    setMessage("");
+    setError("");
   };
 
   return (
@@ -88,7 +154,8 @@ export default function ManageCompany() {
           Manage Company
         </h1>
 
-        {/* Form Switch */}
+        {/* Add / Delete switch */}
+
         <div className={styles.formSwitch}>
 
           <button
@@ -98,7 +165,9 @@ export default function ManageCompany() {
                 ? styles.activeTab
                 : styles.tab
             }
-            onClick={() => setActiveForm("add")}
+            onClick={() =>
+              handleFormChange("add")
+            }
           >
             Add
           </button>
@@ -110,14 +179,34 @@ export default function ManageCompany() {
                 ? styles.activeTab
                 : styles.tab
             }
-            onClick={() => setActiveForm("delete")}
+            onClick={() =>
+              handleFormChange("delete")
+            }
           >
             Delete
           </button>
 
         </div>
 
-        {/* ADD / UPDATE FORM */}
+        {/* Success message */}
+
+        {message && (
+          <div className={styles.successMessage}>
+            {message}
+          </div>
+        )}
+
+        {/* Error message */}
+
+        {error && (
+          <div className={styles.errorMessage}>
+            {error}
+          </div>
+        )}
+
+        {/* =========================
+            ADD / UPDATE FORM
+        ========================== */}
 
         {activeForm === "add" && (
           <form
@@ -142,6 +231,7 @@ export default function ManageCompany() {
                   )
                 }
                 required
+                disabled={loading}
               />
             </div>
 
@@ -160,6 +250,7 @@ export default function ManageCompany() {
                   )
                 }
                 required
+                disabled={loading}
               >
                 <option value="Partner">
                   Partner
@@ -192,6 +283,7 @@ export default function ManageCompany() {
                   )
                 }
                 required
+                disabled={loading}
               />
             </div>
 
@@ -212,20 +304,24 @@ export default function ManageCompany() {
                   )
                 }
                 required
+                disabled={loading}
               />
             </div>
 
             <button
               type="submit"
               className={styles.submitButton}
+              disabled={loading}
             >
-              Submit
+              {loading ? "Processing..." : "Submit"}
             </button>
 
           </form>
         )}
 
-        {/* DELETE FORM */}
+        {/* =========================
+            DELETE FORM
+        ========================== */}
 
         {activeForm === "delete" && (
           <form
@@ -247,14 +343,16 @@ export default function ManageCompany() {
                   setDeleteName(event.target.value)
                 }
                 required
+                disabled={loading}
               />
             </div>
 
             <button
               type="submit"
               className={styles.deleteButton}
+              disabled={loading}
             >
-              Delete
+              {loading ? "Deleting..." : "Delete"}
             </button>
 
           </form>
