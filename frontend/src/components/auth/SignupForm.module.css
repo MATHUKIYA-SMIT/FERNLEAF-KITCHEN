@@ -1,0 +1,311 @@
+.page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  background:
+    radial-gradient(
+      circle at bottom right,
+      #e7eee8,
+      transparent 40%
+    ),
+    linear-gradient(
+      135deg,
+      #faf8f3,
+      #eeebe4
+    );
+}
+
+.card {
+  width: 100%;
+  max-width: 950px;
+
+  min-height: 650px;
+
+  display: grid;
+  grid-template-columns: 42% 58%;
+
+  overflow: hidden;
+
+  border-radius: 24px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 25px 70px
+    rgba(30, 40, 30, 0.15);
+}
+
+/* LEFT */
+
+.brand_section {
+  display: flex;
+  align-items: center;
+
+  padding: 55px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #354f3d,
+      #1f382a
+    );
+
+  color: white;
+}
+
+.brand_section h1 {
+  margin: 0 0 15px;
+
+  font-size: 38px;
+
+  letter-spacing: -1px;
+}
+
+.brand_section p {
+  max-width: 300px;
+
+  margin: 0;
+
+  color:
+    rgba(255, 255, 255, 0.75);
+
+  line-height: 1.7;
+}
+
+.role_info {
+  margin-top: 45px;
+}
+
+.role_info > span {
+  display: block;
+
+  margin-bottom: 15px;
+
+  color:
+    rgba(255, 255, 255, 0.65);
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+}
+
+.role_list {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+}
+
+.role_list span {
+  padding: 8px 13px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.2);
+
+  border-radius: 20px;
+
+  background:
+    rgba(255, 255, 255, 0.08);
+
+  font-size: 13px;
+}
+
+/* RIGHT */
+
+.form_section {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  padding: 45px 60px;
+}
+
+.heading {
+  margin-bottom: 25px;
+}
+
+.heading h2 {
+  margin: 0 0 8px;
+
+  color: #20251f;
+
+  font-size: 30px;
+}
+
+.heading p {
+  margin: 0;
+
+  color: #777d76;
+
+  font-size: 14px;
+}
+
+/* FORM */
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #30362f;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+.field input,
+.field select {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 13px 14px;
+
+  border:
+    1px solid #d9ddd6;
+
+  border-radius: 10px;
+
+  outline: none;
+
+  background: #fafbf9;
+
+  color: #222;
+
+  font-size: 14px;
+
+  transition: 0.2s ease;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: #486b51;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(72, 107, 81, 0.1);
+
+  background: white;
+}
+
+.field select {
+  cursor: pointer;
+}
+
+/* BUTTON */
+
+.submit_button {
+  width: 100%;
+
+  margin-top: 5px;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #354f3d;
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.submit_button:hover {
+  background: #263d2e;
+}
+
+.submit_button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+/* ERROR */
+
+.error {
+  margin-bottom: 18px;
+
+  padding: 12px 14px;
+
+  border-radius: 8px;
+
+  background: #fff0f0;
+
+  color: #b42318;
+
+  font-size: 13px;
+}
+
+/* BOTTOM */
+
+.bottom_text {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  margin-top: 20px;
+
+  color: #777d76;
+
+  font-size: 14px;
+}
+
+.bottom_text a {
+  color: #354f3d;
+
+  font-weight: 600;
+
+  text-decoration: none;
+}
+
+.bottom_text a:hover {
+  text-decoration: underline;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 750px) {
+  .page {
+    padding: 15px;
+  }
+
+  .card {
+    grid-template-columns: 1fr;
+  }
+
+  .brand_section {
+    padding: 35px;
+  }
+
+  .form_section {
+    padding: 30px;
+  }
+}
