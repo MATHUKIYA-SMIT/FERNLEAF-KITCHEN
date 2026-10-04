@@ -83,13 +83,15 @@ export default function AdminNavbar({
         >
           Manage Company
         </button>
-
+        
         <button
           type="button"
           className={styles.navButton}
-          onClick={onManageEmployee}
+          onClick={() =>
+            router.push("/admin/kitchen_employees")
+          }
         >
-          Manage Employee
+          Manage Kitchen Employee
         </button>
 
         <button
