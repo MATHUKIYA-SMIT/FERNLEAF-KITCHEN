@@ -3,12 +3,12 @@ import {
   Controller,
   Post,
   Res,
+  UseGuards,
 } from "@nestjs/common";
-
 import type { Response } from "express";
 
 import { AuthService } from "./auth.service.js";
-
+import { JwtAuthGuard } from "./guards/jwt-auth.guard.js";
 import { LoginDto } from "./dto/login.dto.js";
 import { SignupDto } from "./dto/signup.dto.js";
 
@@ -73,6 +73,36 @@ export class AuthController {
       message: result.message,
 
       user: result.user,
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("logout")
+  logout(
+    @Res({
+      passthrough: true,
+    })
+    response: Response
+  ) {
+    response.clearCookie(
+      "access_token",
+      {
+        httpOnly: true,
+
+        secure:
+          process.env.NODE_ENV ===
+          "production",
+
+        sameSite:
+          process.env.NODE_ENV ===
+          "production"
+            ? "none"
+            : "lax",
+      }
+    );
+
+    return {
+      message: "Logout successful",
     };
   }
 }

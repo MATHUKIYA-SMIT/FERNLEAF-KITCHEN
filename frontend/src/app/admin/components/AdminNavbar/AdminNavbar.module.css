@@ -1,20 +1,23 @@
 .navbar {
   width: 100%;
-  height: 72px;
+  min-height: 72px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  padding: 0 28px;
+  padding: 12px 28px;
 
   background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #d1d5db;
 
   box-sizing: border-box;
 }
 
-/* Logo */
+
+/* =========================
+   LOGO SECTION
+========================= */
 
 .logoSection {
   display: flex;
@@ -25,17 +28,27 @@
 }
 
 .logo {
+  width: 42px;
+  height: 42px;
+
   object-fit: contain;
 }
 
 .websiteName {
   font-size: 18px;
   font-weight: 700;
+
   letter-spacing: 0.5px;
-  color: #214d2b;
+
+  color: #1f2937;
+
+  white-space: nowrap;
 }
 
-/* Search */
+
+/* =========================
+   SEARCH SECTION
+========================= */
 
 .searchSection {
   flex: 1;
@@ -50,63 +63,201 @@
   width: 100%;
   max-width: 420px;
 
-  padding: 11px 16px;
+  height: 42px;
 
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
+  padding: 0 16px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #9ca3af;
+  border-radius: 9px;
 
   outline: none;
 
-  font-size: 14px;
+  background-color: #ffffff;
 
-  background-color: #f9fafb;
+  color: #111827;
+
+  font-size: 14px;
+  font-weight: 500;
 }
+
+
+/* Search placeholder */
+
+.searchBar::placeholder {
+  color: #6b7280;
+
+  opacity: 1;
+}
+
+
+/* Search focus */
 
 .searchBar:focus {
   border-color: #4d7c52;
+
   background-color: #ffffff;
+
+  color: #111827;
+
+  box-shadow:
+    0 0 0 3px rgba(77, 124, 82, 0.12);
 }
 
-/* Right buttons */
+
+/* =========================
+   RIGHT ACTION SECTION
+========================= */
 
 .actionSection {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+
   gap: 10px;
 
   min-width: 420px;
-  justify-content: flex-end;
 }
+
+
+/* =========================
+   COMMON BUTTON
+========================= */
 
 .navButton,
 .logoutButton {
-  border: none;
+  min-height: 42px;
+
+  padding: 0 15px;
+
   border-radius: 8px;
 
-  padding: 10px 15px;
-
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
+
+  line-height: 1;
 
   cursor: pointer;
 
-  transition: 0.2s ease;
+  white-space: nowrap;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
+
+/* =========================
+   MANAGE BUTTONS
+========================= */
+
 .navButton {
+  border: 1px solid #b7ccb9;
+
   background-color: #edf4ed;
-  color: #285a32;
+
+  color: #214d2b;
 }
 
 .navButton:hover {
   background-color: #dcebdc;
+
+  border-color: #8eae92;
+
+  color: #163b20;
 }
 
+
+/* =========================
+   LOGOUT
+========================= */
+
 .logoutButton {
+  border: 1px solid #dc2626;
+
   background-color: #dc2626;
+
   color: #ffffff;
 }
 
 .logoutButton:hover {
   background-color: #b91c1c;
+
+  border-color: #b91c1c;
+
+  color: #ffffff;
+}
+
+
+/* =========================
+   BUTTON ACTIVE
+========================= */
+
+.navButton:active,
+.logoutButton:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================
+   DISABLED
+========================= */
+
+.navButton:disabled,
+.logoutButton:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1100px) {
+  .logoSection {
+    min-width: 200px;
+  }
+
+  .actionSection {
+    min-width: auto;
+  }
+
+  .searchSection {
+    padding: 0 15px;
+  }
+}
+
+
+@media (max-width: 850px) {
+  .navbar {
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    padding: 12px 18px;
+  }
+
+  .logoSection {
+    min-width: auto;
+  }
+
+  .searchSection {
+    order: 3;
+
+    width: 100%;
+
+    padding: 0;
+  }
+
+  .searchBar {
+    max-width: none;
+  }
+
+  .actionSection {
+    min-width: auto;
+  }
 }

@@ -2,11 +2,18 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+
+import { apiRequest } from "@/lib/api";
+
 import styles from "./AdminNavbar.module.css";
 
 interface AdminNavbarProps {
   onManageCompany: () => void;
   onManageEmployee: () => void;
+}
+
+interface LogoutResponse {
+  message: string;
 }
 
 export default function AdminNavbar({
@@ -15,19 +22,30 @@ export default function AdminNavbar({
 }: AdminNavbarProps) {
   const router = useRouter();
 
-  const handleLogout = () => {
-    /*
-     * Authentication uses an HTTP-only access_token cookie.
-     * Actual cookie clearing will be connected with the backend
-     * logout API when we implement the logout endpoint.
-     */
+  const handleLogout = async () => {
+    try {
+      await apiRequest<LogoutResponse>(
+        "/auth/logout",
+        {
+          method: "POST",
+        }
+      );
 
-    router.push("/login");
+      /*
+       * Backend successfully cleared
+       * the HTTP-only access_token cookie.
+       */
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
     <nav className={styles.navbar}>
+
       {/* LEFT - Logo */}
+
       <div className={styles.logoSection}>
         <Image
           src="/logo.png"
@@ -42,7 +60,9 @@ export default function AdminNavbar({
         </span>
       </div>
 
+
       {/* CENTER - Search */}
+
       <div className={styles.searchSection}>
         <input
           type="text"
@@ -51,8 +71,11 @@ export default function AdminNavbar({
         />
       </div>
 
+
       {/* RIGHT - Actions */}
+
       <div className={styles.actionSection}>
+
         <button
           type="button"
           className={styles.navButton}
@@ -76,7 +99,9 @@ export default function AdminNavbar({
         >
           Logout
         </button>
+
       </div>
+
     </nav>
   );
 }
